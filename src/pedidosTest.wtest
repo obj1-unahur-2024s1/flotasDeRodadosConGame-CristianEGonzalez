@@ -1,0 +1,50 @@
+import rodados.*
+import dependencias.*
+import colores.*
+import pedidos.*
+
+const cachito = new Corsa(color=rojo)
+
+test "cachito PUEDE satisfacer un pedido de:
+distancia 960 kms, tiempo 8 horas, para 4 pasajeros,
+con colores incompatibles azul y negro" {
+	const pedido = new Pedido(distancia=960,tiempo=8,pasajeros=4,coloresIncompatibles=[azul,negro])
+	assert.that(pedido.puedeLlevarseEn(cachito))
+}
+
+test "cachito NO puede satisfacer un pedido de:
+distancia 960 kms, tiempo 8 horas, para 6 pasajeros,
+con colores incompatibles rojo, azul y negro" {
+	
+	const pedido = new Pedido(distancia=960,tiempo=8,pasajeros=6,coloresIncompatibles=[rojo,azul,negro])
+	assert.notThat(pedido.puedeLlevarseEn(cachito))
+}
+
+test "cachito NO puede satisfacer un pedido de:
+distancia 960 kms, tiempo 6 horas, para 4 pasajeros,
+con colores incompatibles azul y negro" {
+	
+	const pedido = new Pedido(distancia=960,tiempo=6,pasajeros=4,coloresIncompatibles=[azul,negro])
+	assert.notThat(pedido.puedeLlevarseEn(cachito))
+}
+
+test "test pedidosImposibles() y incompatibleParaTodos()"{
+	const deportes = new Dependencia(nombre="Deportes", cantEmpleados=45)
+	deportes.agregarAFlota(new Kwid(tanqueAdicional=true))
+	deportes.agregarAFlota(new Corsa(color=verde))
+	deportes.agregarAFlota(new Corsa(color=azul))
+	
+	const pedido1 = new Pedido(distancia=2100,tiempo=7,pasajeros=4,coloresIncompatibles=[azul,negro])
+	const pedido2 = new Pedido(distancia=1360,tiempo=12,pasajeros=4,coloresIncompatibles=[azul,beige])
+	const pedido3 = new Pedido(distancia=1360,tiempo=8,pasajeros=4,coloresIncompatibles=[azul,verde])
+	const pedido4 = new Pedido(distancia=960,tiempo=6,pasajeros=4,coloresIncompatibles=[azul,rojo])
+	const pedido5 = new Pedido(distancia=960,tiempo=8,pasajeros=4,coloresIncompatibles=[azul,negro])
+	deportes.agregarPedido(pedido1)
+	deportes.agregarPedido(pedido2)
+	deportes.agregarPedido(pedido3)
+	deportes.agregarPedido(pedido4)
+	deportes.agregarPedido(pedido5)
+	
+	assert.equals([pedido1,pedido3,pedido4], deportes.pedidosImposibles())
+	assert.that(deportes.incompatibleParaTodos(azul))
+}
